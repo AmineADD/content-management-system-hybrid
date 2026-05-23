@@ -11,6 +11,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutlined";
 import type { BlogColumnDefinition, BlogRow } from "@/types/blog";
 import {
   controlsGridSx,
@@ -44,6 +46,10 @@ function articleOptionValue(row: BlogRow): string {
   if (id) return `id:${id}`;
   const slug = String(row.slug ?? "").trim();
   return slug ? `slug:${slug}` : "";
+}
+
+function isArticleLive(row: BlogRow): boolean {
+  return row.is_live === true;
 }
 
 export function ArticlesSection({
@@ -116,9 +122,34 @@ export function ArticlesSection({
               {visibleArticles.map((article) => {
                 const value = articleOptionValue(article);
                 if (!value) return null;
+                const live = isArticleLive(article);
                 return (
                   <MenuItem key={value} value={value}>
-                    {articleOptionLabel(article)}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        width: "100%",
+                      }}
+                    >
+                      {live ? (
+                        <CheckCircleIcon
+                          fontSize="small"
+                          color="success"
+                          aria-label="Live"
+                          titleAccess="Live"
+                        />
+                      ) : (
+                        <RemoveCircleOutlineIcon
+                          fontSize="small"
+                          sx={{ color: "text.disabled" }}
+                          aria-label="Not live"
+                          titleAccess="Not live"
+                        />
+                      )}
+                      <Box component="span">{articleOptionLabel(article)}</Box>
+                    </Box>
                   </MenuItem>
                 );
               })}
