@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Box, Container, Typography } from "@mui/material";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { ArticlesSection } from "@/sections/ArticlesSection/ArticlesSection";
+import { BucketSection } from "@/sections/BucketSection/BucketSection";
 import { ConnectionSection } from "@/sections/ConnectionSection/ConnectionSection";
 import { ContentSection } from "@/sections/ContentSection/ContentSection";
 import {
@@ -542,6 +543,8 @@ export default function Home() {
         onFieldChange={handleFieldChange}
         onSubmit={handleSubmit}
       />
+
+      <BucketSection isConnected={isConnected} client={supabaseClient} />
     </Container>
   );
 }
