@@ -22,6 +22,7 @@ export async function POST(request: Request): Promise<Response> {
     content: body.content_html,
     language: body.languageCode,
     seo_keywords: body.metaDescription ?? null,
+    meta_description: body.metaDescription,
     created_at: body.createdAt,
     // TODO: replace fakes below with real data
     author_name: "Milo",
