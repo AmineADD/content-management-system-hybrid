@@ -693,15 +693,22 @@ export default function Home() {
             "Update requires id or slug in current template values.",
           );
         }
-        const { data, error } = await supabaseClient
+        const { data, error, count } = await supabaseClient
           .from(TEMPLATE_TABLE)
-          .update(payload)
+          .update(payload, { count: "exact" })
           .eq(filter.field, filter.value)
           .select("*")
-          .single();
+          .maybeSingle();
         if (error) throw error;
+        if (count === 0) {
+          throw new Error(
+            `No template matched ${filter.field}="${filter.value}". It may have been deleted or modified elsewhere.`,
+          );
+        }
 
-        setTemplateFormValues((data ?? {}) as BlogRow);
+        if (data) {
+          setTemplateFormValues(data as BlogRow);
+        }
         setFeedbackMessage("Template updated successfully.");
       }
 
