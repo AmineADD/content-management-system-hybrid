@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import ReactMarkdown from "react-markdown";
+import { IndexStatus } from "@/components/IndexStatus";
 import type { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type {
@@ -36,6 +37,7 @@ interface ContentSectionProps {
   columns: BlogColumnDefinition[];
   values: BlogRow;
   validationError: string | null;
+  publicUrl?: string | null;
   onFieldChange: (key: string, value: unknown) => void;
   onSubmit: (action: SubmitAction) => void;
 }
@@ -138,6 +140,7 @@ export function ContentSection({
   columns,
   values,
   validationError,
+  publicUrl,
   onFieldChange,
   onSubmit,
 }: ContentSectionProps) {
@@ -236,6 +239,8 @@ export function ContentSection({
       <Typography variant="h6" sx={{ mb: 2 }}>
         3. Content
       </Typography>
+
+      {publicUrl && <IndexStatus url={publicUrl} />}
 
       {!isConnected ? (
         <Alert severity="info">

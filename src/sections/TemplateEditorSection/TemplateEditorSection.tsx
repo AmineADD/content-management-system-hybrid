@@ -12,6 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { IndexStatus } from "@/components/IndexStatus";
 import type {
   BlogColumnDefinition,
   BlogRow,
@@ -41,6 +42,7 @@ interface TemplateEditorSectionProps {
   columns: BlogColumnDefinition[];
   values: BlogRow;
   validationError: string | null;
+  publicUrl?: string | null;
   onFieldChange: (key: string, value: unknown) => void;
   onSubmit: (action: SubmitAction) => void;
 }
@@ -124,6 +126,7 @@ export function TemplateEditorSection({
   columns,
   values,
   validationError,
+  publicUrl,
   onFieldChange,
   onSubmit,
 }: TemplateEditorSectionProps) {
@@ -243,6 +246,8 @@ export function TemplateEditorSection({
       <Typography variant="h6" sx={{ mb: 2 }}>
         3. Template Editor
       </Typography>
+
+      {publicUrl && <IndexStatus url={publicUrl} />}
 
       {!isConnected ? (
         <Alert severity="info">

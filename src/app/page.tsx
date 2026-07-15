@@ -23,6 +23,7 @@ import {
   detectWorkspaceFeatures,
   type WorkspaceFeatures,
 } from "@/lib/brands";
+import { buildPublicUrl } from "@/lib/publicUrl";
 import {
   DEFAULT_TEMPLATE_COLUMNS,
   findDuplicateTemplate,
@@ -227,6 +228,15 @@ export default function Home() {
     happyWall: Boolean(features?.wallTable),
   };
   const safeTab: WorkspaceTab = tabAvailable[activeTab] ? activeTab : "blog";
+  // Only PROD rows have a counterpart on the public domain, so that is the only
+  // environment where a Google index check means anything.
+  const isProd = connectionValues.environment === "PROD";
+  const articlePublicUrl = isProd
+    ? buildPublicUrl("blog", connectionValues.brand, formValues)
+    : null;
+  const templatePublicUrl = isProd
+    ? buildPublicUrl("template", connectionValues.brand, templateFormValues)
+    : null;
   const hasAutoConnectedRef = useRef(false);
   const prefillRef = useRef<Record<string, unknown> | null>(null);
   const handleConnectRef = useRef<
@@ -919,6 +929,7 @@ export default function Home() {
             columns={columns}
             values={formValues}
             validationError={validationError}
+            publicUrl={articlePublicUrl}
             onFieldChange={handleFieldChange}
             onSubmit={handleSubmit}
           />
@@ -952,6 +963,7 @@ export default function Home() {
             columns={templateColumns}
             values={templateFormValues}
             validationError={templateValidationError}
+            publicUrl={templatePublicUrl}
             onFieldChange={handleTemplateFieldChange}
             onSubmit={handleTemplateSubmit}
           />
@@ -962,6 +974,7 @@ export default function Home() {
         <HappySpotsSection
           isConnected={isConnected}
           client={supabaseClient}
+          brand={connectionValues.brand}
           environment={connectionValues.environment}
           onFeedback={setFeedbackMessage}
         />
@@ -971,6 +984,7 @@ export default function Home() {
         <HappyDatesSection
           isConnected={isConnected}
           client={supabaseClient}
+          brand={connectionValues.brand}
           environment={connectionValues.environment}
           onFeedback={setFeedbackMessage}
         />

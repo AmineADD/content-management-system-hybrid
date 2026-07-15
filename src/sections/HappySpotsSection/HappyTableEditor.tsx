@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { IndexStatus } from "@/components/IndexStatus";
 import type {
   BlogColumnDefinition,
   BlogRow,
@@ -58,6 +59,7 @@ interface HappyTableEditorProps {
   groups: FieldGroup[];
   values: BlogRow;
   validationError: string | null;
+  publicUrl?: string | null;
   relationSelects?: Record<string, RelationSelect>;
   onFieldChange: (key: string, value: unknown) => void;
   onSubmit: (action: SubmitAction) => void;
@@ -137,6 +139,7 @@ export function HappyTableEditor({
   groups,
   values,
   validationError,
+  publicUrl,
   relationSelects = {},
   onFieldChange,
   onSubmit,
@@ -323,6 +326,8 @@ export function HappyTableEditor({
       <Typography variant="h6" sx={{ mb: 2 }}>
         {title}
       </Typography>
+
+      {publicUrl && <IndexStatus url={publicUrl} />}
 
       {!isConnected ? (
         <Alert severity="info">

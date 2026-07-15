@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Alert, Box, Tab, Tabs } from "@mui/material";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { EnvironmentLabel } from "@/types/connection";
+import type { BrandKey } from "@/lib/brands";
+import { buildPublicUrl } from "@/lib/publicUrl";
 import { HAPPY_DATE_TABLES } from "@/lib/happyDateSchema";
 import { TemplatesSection } from "@/sections/TemplatesSection/TemplatesSection";
 import { HappyTableEditor } from "@/sections/HappySpotsSection/HappyTableEditor";
@@ -12,6 +14,7 @@ import { useHappyTable } from "@/sections/HappySpotsSection/useHappyTable";
 interface HappyDatesSectionProps {
   isConnected: boolean;
   client: SupabaseClient | null;
+  brand: BrandKey;
   environment: EnvironmentLabel;
   onFeedback: (message: string | null) => void;
 }
@@ -21,6 +24,7 @@ type HappyDateSubTab = "dates" | "categories";
 export function HappyDatesSection({
   isConnected,
   client,
+  brand,
   environment,
   onFeedback,
 }: HappyDatesSectionProps) {
@@ -39,6 +43,17 @@ export function HappyDatesSection({
 
   const active = subTab === "dates" ? dates : categories;
   const config = HAPPY_DATE_TABLES[subTab];
+
+  // Only PROD rows have a counterpart on the public domain, so that is the only
+  // environment where a Google index check means anything.
+  const publicUrl =
+    environment === "PROD"
+      ? buildPublicUrl(
+          subTab === "dates" ? "date" : "dateCategory",
+          brand,
+          active.form,
+        )
+      : null;
 
   // Existing categories become the options for the date's category_id dropdown,
   // limited to those matching the language currently selected on the date form.
@@ -105,6 +120,7 @@ export function HappyDatesSection({
         groups={config.groups}
         values={active.form}
         validationError={active.error}
+        publicUrl={publicUrl}
         relationSelects={
           subTab === "dates"
             ? { category_id: { options: categoryOptions, multiple: false } }

@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Alert, Box, Tab, Tabs } from "@mui/material";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { EnvironmentLabel } from "@/types/connection";
+import type { BrandKey } from "@/lib/brands";
+import { buildPublicUrl } from "@/lib/publicUrl";
 import { HAPPY_TABLES } from "@/lib/happySpotSchema";
 import { TemplatesSection } from "@/sections/TemplatesSection/TemplatesSection";
 import { HappyTableEditor } from "./HappyTableEditor";
@@ -12,6 +14,7 @@ import { useHappyTable } from "./useHappyTable";
 interface HappySpotsSectionProps {
   isConnected: boolean;
   client: SupabaseClient | null;
+  brand: BrandKey;
   environment: EnvironmentLabel;
   onFeedback: (message: string | null) => void;
 }
@@ -21,6 +24,7 @@ type HappySubTab = "spots" | "tags";
 export function HappySpotsSection({
   isConnected,
   client,
+  brand,
   environment,
   onFeedback,
 }: HappySpotsSectionProps) {
@@ -39,6 +43,13 @@ export function HappySpotsSection({
 
   const active = subTab === "spots" ? spots : tags;
   const config = HAPPY_TABLES[subTab];
+
+  // Only PROD rows have a counterpart on the public domain, so that is the only
+  // environment where a Google index check means anything.
+  const publicUrl =
+    environment === "PROD"
+      ? buildPublicUrl(subTab === "spots" ? "spot" : "spotTag", brand, active.form)
+      : null;
 
   // Existing tags become the options for the spot's main_tag_id / tag_ids dropdowns.
   const tagOptions = useMemo(
@@ -98,6 +109,7 @@ export function HappySpotsSection({
         groups={config.groups}
         values={active.form}
         validationError={active.error}
+        publicUrl={publicUrl}
         relationSelects={
           subTab === "spots"
             ? {
